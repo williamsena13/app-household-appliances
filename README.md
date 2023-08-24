@@ -23,3 +23,7 @@ npm run build
 ```
 npm run lint
 ```
+
+### Versão Online
+
+Caso queira ver o código funcionando, [clique aqui](http://eletrodomesticos.bassena.com.br/)

@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://api-household-appliances.test/api",
+  //baseURL: "http://api-household-appliances.test/api",
+  baseURL: "https://householdappliances.bassena.com.br/api",
   timeout: 10000, // Tempo limite para as requisições
 });
 
