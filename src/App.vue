@@ -2,7 +2,7 @@
   <div id="app">
     <header>
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="#">Front-end</a>
+        <router-link to="/" class="navbar-brand">{{ appName }}</router-link>
         <button
           class="navbar-toggler"
           type="button"
@@ -16,15 +16,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item" :class="{ active: $route.path === '/' }">
               <router-link to="/" class="nav-link">Home</router-link>
             </li>
-            <li class="nav-item">
+            <!--
+            <li class="nav-item" :class="{ active: $route.path === '/marcas' }">
               <router-link to="/marcas" class="nav-link">Marcas</router-link>
             </li>
-            <li class="nav-item">
+            -->
+            <li
+              class="nav-item"
+              :class="{ active: $route.path === '/eletrodomesticos' }"
+            >
               <router-link to="/eletrodomesticos" class="nav-link"
                 >Eletrodomésticos</router-link
+              >
+            </li>
+            <li
+              class="nav-item"
+              :class="{ active: $route.path === '/eletrodomesticos/create' }"
+            >
+              <router-link to="/eletrodomesticos/create" class="nav-link"
+                >Novo Eletrodoméstico</router-link
               >
             </li>
           </ul>
@@ -49,6 +62,11 @@
 export default {
   name: "App",
   components: {},
+  data() {
+    return {
+      appName: "Nome Loja",
+    };
+  },
 };
 </script>
 

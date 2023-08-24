@@ -30,7 +30,9 @@
                 focusable="false"
               >
                 <rect width="100%" height="100%" fill="#55595c" />
-                <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+                <text x="50%" y="50%" fill="#eceeef" dy=".3em">
+                  {{ appliance.name }}
+                </text>
                 <title>{{ appliance.name }}</title>
               </svg>
 
@@ -38,23 +40,24 @@
                 <p class="card-text">
                   {{ appliance.description }}
                 </p>
-                <spam>Voltagem: {{ appliance.voltage + "v" }} </spam>
+                <div>Voltagem: {{ appliance.voltage + "v" }}</div>
                 <p class="card-text">Marca: {{ appliance.brand.name }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
                     <button
                       type="button"
                       class="btn btn-sm btn-outline-secondary"
+                      @click="editHouseholdAppliances(appliance)"
                     >
-                      View
+                      Editar
                     </button>
-                    <router-link
-                      :to="{ name: 'eletrodomesticos.edit' }"
+                    <button
                       type="button"
-                      class="btn btn-sm btn-outline-secondary"
+                      class="btn btn-sm btn-outline-danger"
+                      @click="deleteHouseholdAppliances(appliance)"
                     >
-                      Edit
-                    </router-link>
+                      Delete
+                    </button>
                   </div>
                   <small class="text-muted">{{
                     appliance.created_at ?? ""
@@ -101,43 +104,6 @@ export default {
     };
   },
   methods: {
-    async storeHouseholdAppliances() {
-      try {
-        const data = {
-          code: this.code,
-          name: this.name,
-          description: this.description,
-          voltage: this.voltage,
-          brand_id: this.brand_id,
-        };
-        const response = await api.createProduct(data);
-        console.log(response);
-        this.showMessage("Produto criado com sucesso!", "success");
-        await this.fetchHouseholdAppliances(this.currentPage);
-      } catch (error) {
-        this.showMessage(
-          "Erro ao criar produto. Verifique os campos e tente novamente.",
-          "error"
-        );
-      }
-    },
-    async fetchBands() {
-      try {
-        const response = await api.getBands();
-        this.bands = response.data.data;
-      } catch (error) {
-        this.showMessage("Erro ao carregar marcas.", "error");
-      }
-    },
-    async fetchHouseholdAppliances(page) {
-      try {
-        const response = await api.getProducts(page, this.perPage);
-        console.log(response.data.data);
-        this.householdAppliances = response.data.data;
-      } catch (error) {
-        this.showMessage("Erro ao carregar eletrodomésticos.", "error");
-      }
-    },
     showMessage(message, type) {
       this.message = message;
       this.messageType = type;
@@ -146,13 +112,50 @@ export default {
         this.messageType = "";
       }, 5000);
     },
+    getHouseholdAppliances(page) {
+      try {
+        console.log(page);
+        api
+          .getProducts()
+          .then((response) => {
+            console.log("Resposta:");
+            console.log(response);
+
+            this.householdAppliances = response;
+          })
+          .catch((error) => {
+            console.log("Erro na requisição:");
+            console.error(error);
+
+            this.showMessage("Erro ao carregar eletrodomésticos.", "error");
+          });
+      } catch (erro) {
+        console.log("AQUI NO CACH");
+        console.log(erro);
+        this.showMessage("Erro ao carregar eletrodomésticos.", "error");
+      }
+    },
+
     changePage(page) {
       this.currentPage = page;
-      this.fetchHouseholdAppliances(this.currentPage);
+      this.getHouseholdAppliances(this.currentPage);
     },
-    perPageChanged() {
-      this.currentPage = 1;
-      this.fetchHouseholdAppliances(this.currentPage);
+
+    editHouseholdAppliances(householdAppliances) {
+      console.log("Vou editar");
+      console.log(householdAppliances);
+      this.$router.push({
+        name: "eletrodomesticos.edit",
+        params: { id: householdAppliances.id },
+      });
+    },
+    deleteHouseholdAppliances(householdAppliances) {
+      if (confirm("Tem certeza que deseja excluir este registro?")) {
+        api.deleteProduct(householdAppliances.id).then((response) => {
+          console.log(response);
+          this.getHouseholdAppliances();
+        });
+      }
     },
   },
   computed: {
@@ -166,8 +169,7 @@ export default {
     },
   },
   async created() {
-    await this.fetchBands();
-    await this.fetchHouseholdAppliances(this.currentPage);
+    await this.getHouseholdAppliances(this.currentPage);
   },
 };
 </script>

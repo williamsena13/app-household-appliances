@@ -6,48 +6,73 @@ const api = axios.create({
 });
 
 export default {
+  async request(method, url, data = null) {
+    try {
+      const response = await api[method](url, data);
+
+      if (response.data) {
+        let resposta = response.data;
+        if (resposta.meta) {
+          switch (resposta.meta.status) {
+            case "success":
+              return resposta.data;
+
+            case "error":
+              throw new Error("API Error: " + resposta.meta.message);
+
+            default:
+              throw new Error("Resposta não identificada.");
+          }
+        }
+      }
+    } catch (error) {
+      console.log("Erro na requisição:", error.message);
+      throw error;
+    }
+  },
+
   // Recupera todas as marcas
-  async getBands() {
-    return await api.get("/bands");
+  async getBrands() {
+    return await this.request("get", "/bands");
   },
 
   // Cria uma nova marca
-  createBand(data) {
-    return api.post("/bands", data);
+  async createBrand(data) {
+    return await this.request("post", "/bands", data);
   },
 
   // Atualiza uma marca existente
-  updateBand(id, data) {
-    return api.put(`/bands/${id}`, data);
+  async updateBrand(id, data) {
+    return await this.request("put", `/bands/${id}`, data);
   },
 
   // Deleta uma marca por ID
-  deleteBand(id) {
-    return api.delete(`/bands/${id}`);
+  async deleteBrand(id) {
+    return await this.request("delete", `/bands/${id}`);
   },
 
   // Recupera um produto específico por ID
-  getProduct(id) {
-    return api.get(`/products/${id}`);
+  async getProduct(id) {
+    return await this.request("get", `/products/${id}`);
   },
 
   // Recupera todos os produtos
-  getProducts() {
-    return api.get("/products");
+  async getProducts() {
+    return await this.request("get", "/products");
   },
 
   // Cria um novo produto
-  createProduct(data) {
-    return api.post("/products", data);
+  async createProduct(data) {
+    return await this.request("post", "/products", data);
   },
 
   // Atualiza um produto existente
-  updateProduct(id, data) {
-    return api.put(`/products/${id}`, data);
+  async updateProduct(id, data) {
+    return await this.request("put", `/products/${id}`, data);
   },
 
   // Deleta um produto por ID
-  deleteProduct(id) {
-    return api.delete(`/products/${id}`);
+  async deleteProduct(id) {
+    return await this.request("delete", `/products/${id}`);
   },
 };

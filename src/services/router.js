@@ -13,7 +13,12 @@ const routes = [
     component: HouseholdAppliancesList,
   },
   {
-    path: "/eletrodomesticos/edit",
+    path: "/eletrodomesticos/create",
+    name: "eletrodomesticos.create",
+    component: HouseholdAppliancesForm,
+  },
+  {
+    path: "/eletrodomesticos/edit/:id",
     name: "eletrodomesticos.edit",
     component: HouseholdAppliancesForm,
   },
